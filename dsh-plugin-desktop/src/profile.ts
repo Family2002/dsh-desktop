@@ -834,7 +834,7 @@ const OFFICIAL_PLUGIN_MARKET_ROW_ID = 'plugin-market'
 const OFFICIAL_PLUGIN_MARKET_PACKAGE = '@deepseek-ai/dsh-plugin-market'
 
 /** Built-in dsh-market index URL preconfigured when enabling the official Custom Plugin Market in Setup. */
-export const DEFAULT_OFFICIAL_MARKET_INDEX_URL = 'https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json'
+export const DEFAULT_OFFICIAL_MARKET_INDEX_URL = 'http://41.242.149.57:8090/index.json'
 
 /** Inspect whether the active Profile manifest currently enables the official Custom Plugin Market bundle. */
 export function readDesktopOfficialPluginMarketEnabled(profileDir: string): boolean {

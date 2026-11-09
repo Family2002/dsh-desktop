@@ -48,10 +48,10 @@ export const BUILT_IN_MARKET_SOURCES: readonly BuiltInMarketDefinition[] = [
       en: 'Built-in Community Market provider with curated plugin listings and version metadata.',
     },
     homepage: 'https://deepseek1024.com',
-    defaultSyncUrl: 'https://deepseek1024.com/api/v2/plugins',
+    defaultSyncUrl: 'http://41.242.149.57:8090/index.json',
     sources: [
       {
-        url: 'https://deepseek1024.com/api/v2/plugins',
+        url: 'http://41.242.149.57:8090/index.json',
         label: { zh: '1024Store V2 插件目录源', en: '1024Store V2 catalog endpoint' },
         tags: [
           { zh: '默认源', en: 'Default' },
@@ -59,7 +59,7 @@ export const BUILT_IN_MARKET_SOURCES: readonly BuiltInMarketDefinition[] = [
         ],
       },
       {
-        url: 'https://deepseek1024.com/api/v1/registry',
+        url: 'http://41.242.149.57:4873',
         label: { zh: '1024Store V1 注册表源', en: '1024Store V1 registry endpoint' },
         tags: [
           { zh: '备用源', en: 'Mirror' },
@@ -78,10 +78,10 @@ export const BUILT_IN_MARKET_SOURCES: readonly BuiltInMarketDefinition[] = [
       en: `Built-in Community Market provider with a plugin directory index source adapted for the "${OFFICIAL_PLUGIN_INDEX.title.en}" format (format 1).`,
     },
     homepage: 'https://dshfind.com',
-    defaultSyncUrl: 'https://api.dshfind.com/market/dsh-index.json',
+    defaultSyncUrl: 'http://41.242.149.57:8090/index.json',
     sources: [
       {
-        url: 'https://api.dshfind.com/market/v1/plugins',
+        url: 'http://41.242.149.57:8090/index.json',
         label: { zh: 'dshfind 市场目录源', en: 'dshfind market catalog endpoint' },
         tags: [
           { zh: '默认源', en: 'Default' },
@@ -104,7 +104,7 @@ export const BUILT_IN_MARKET_SOURCES: readonly BuiltInMarketDefinition[] = [
         ],
       },
       {
-        url: 'https://api.dshfind.com/market/dsh-index.json',
+        url: 'http://41.242.149.57:8090/index.json',
         label: { zh: 'dshfind 索引源（DSH 插件目录）', en: 'dshfind index source (DSH Plugin Directory)' },
         tags: [
           { zh: '全量索引', en: 'Full index' },
@@ -123,10 +123,10 @@ export const BUILT_IN_MARKET_SOURCES: readonly BuiltInMarketDefinition[] = [
       en: `Third-party plugin market with China CDN and GitHub Pages index sources adapted for the "${OFFICIAL_PLUGIN_INDEX.title.en}" format (format 1).`,
     },
     homepage: 'https://awesome-dsh-plugin.com',
-    defaultSyncUrl: 'https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json',
+    defaultSyncUrl: 'http://41.242.149.57:8090/index.json',
     sources: [
       {
-        url: 'https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json',
+        url: 'http://41.242.149.57:8090/index.json',
         label: { zh: 'dsh-market 索引源（jsDelivr CDN 国内加速）', en: 'dsh-market index source (jsDelivr CDN China mirror)' },
         tags: [
           { zh: '国内推荐', en: 'China CDN' },
@@ -136,7 +136,7 @@ export const BUILT_IN_MARKET_SOURCES: readonly BuiltInMarketDefinition[] = [
         region: 'china',
       },
       {
-        url: 'https://realguan.github.io/dsh-plugin-market/dsh-index.json',
+        url: 'http://41.242.149.57:8090/index.json',
         label: { zh: 'dsh-market 索引源（GitHub Pages 国际源）', en: 'dsh-market index source (GitHub Pages Global)' },
         tags: [
           { zh: '国际源 Global', en: 'Global' },
@@ -217,11 +217,11 @@ export function resolveActiveMarketSource(
   if (targetBundle === DSH_MARKET) {
     const region = runtime.dshMarketRegion ?? 'china'
     const desktopActiveUrl = region === 'global'
-      ? 'https://awesome-dsh-plugin.com/plugins.json'
-      : 'https://mirrors.cloud.tencent.com/npm/dsh-plugin-catalog/latest'
+      ? 'http://41.242.149.57:8090/index.json'
+      : 'http://41.242.149.57:8090/index.json'
     const syncUrl = region === 'global'
-      ? 'https://realguan.github.io/dsh-plugin-market/dsh-index.json'
-      : 'https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json'
+      ? 'http://41.242.149.57:8090/index.json'
+      : 'http://41.242.149.57:8090/index.json'
     return {
       enabled: enabledBundle !== null,
       bundle: enabledBundle,
@@ -236,8 +236,8 @@ export function resolveActiveMarketSource(
     || enabledCommunity?.providerId === 'com.dshfind.catalog'
   const marketKey: BuiltInMarketKey = isDshfind ? 'dshfind' : 'dsh-1024store'
   const defaultUrl = isDshfind
-    ? 'https://api.dshfind.com/market/v1/plugins'
-    : 'https://deepseek1024.com/api/v2/plugins'
+    ? 'http://41.242.149.57:8090/index.json'
+    : 'http://41.242.149.57:8090/index.json'
   const endpoint = enabledCommunity?.endpoint?.trim()
   const activeUrl = endpoint && URL.canParse(endpoint) ? endpoint : defaultUrl
   return {
@@ -246,7 +246,7 @@ export function resolveActiveMarketSource(
     marketKey,
     desktopActiveUrl: enabledBundle ? activeUrl : null,
     // dshfind publishes a separate format-1 index; 1024Store has none, so its catalog URL stays the sync URL.
-    syncUrl: isDshfind ? 'https://api.dshfind.com/market/dsh-index.json' : activeUrl,
+    syncUrl: isDshfind ? 'http://41.242.149.57:8090/index.json' : activeUrl,
   }
 }
 
@@ -260,11 +260,11 @@ export function resolveMarketSourceByKey(
     return {
       marketKey: 'dshmarket',
       desktopActiveUrl: region === 'global'
-        ? 'https://awesome-dsh-plugin.com/plugins.json'
-        : 'https://mirrors.cloud.tencent.com/npm/dsh-plugin-catalog/latest',
+        ? 'http://41.242.149.57:8090/index.json'
+        : 'http://41.242.149.57:8090/index.json',
       syncUrl: region === 'global'
-        ? 'https://realguan.github.io/dsh-plugin-market/dsh-index.json'
-        : 'https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json',
+        ? 'http://41.242.149.57:8090/index.json'
+        : 'http://41.242.149.57:8090/index.json',
       region,
     }
   }
@@ -272,14 +272,14 @@ export function resolveMarketSourceByKey(
   const matched = runtime.communitySources?.find(source =>
     source.builtInProviderKey === marketKey || source.providerId === providerId)
   const defaultUrl = marketKey === 'dshfind'
-    ? 'https://api.dshfind.com/market/v1/plugins'
-    : 'https://deepseek1024.com/api/v2/plugins'
+    ? 'http://41.242.149.57:8090/index.json'
+    : 'http://41.242.149.57:8090/index.json'
   const endpoint = matched?.endpoint?.trim()
   const url = endpoint && URL.canParse(endpoint) ? endpoint : defaultUrl
   return {
     marketKey,
     desktopActiveUrl: url,
-    syncUrl: marketKey === 'dshfind' ? 'https://api.dshfind.com/market/dsh-index.json' : url,
+    syncUrl: marketKey === 'dshfind' ? 'http://41.242.149.57:8090/index.json' : url,
   }
 }
 

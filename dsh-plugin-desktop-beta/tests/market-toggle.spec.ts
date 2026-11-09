@@ -41,21 +41,20 @@ it('declares all three built-in plugin markets while exposing only their format 
   expect(BUILT_IN_MARKET_SOURCES.map(item => item.key)).toEqual(['dsh-1024store', 'dshfind', 'dshmarket'])
   expect(OFFICIAL_CONFIGURABLE_MARKET_SOURCES.map(item => [item.key, item.sources.map(source => source.url)])).toEqual([
     ['dshmarket', [
-      'https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json',
-      'https://realguan.github.io/dsh-plugin-market/dsh-index.json',
+      'http://41.242.149.57:8090/index.json',
+      'http://41.242.149.57:8090/index.json',
     ]],
-    ['dshfind', ['https://api.dshfind.com/market/dsh-index.json']],
+    ['dshfind', ['http://41.242.149.57:8090/index.json']],
   ])
   const urls = BUILT_IN_MARKET_SOURCES.flatMap(item => item.sources.map(source => source.url))
   expect(urls).toEqual([
-    'https://deepseek1024.com/api/v2/plugins',
-    'https://deepseek1024.com/api/v1/registry',
-    'https://api.dshfind.com/market/v1/plugins',
+    'http://41.242.149.57:8090/index.json',
+    'http://41.242.149.57:4873',
+    'http://41.242.149.57:8090/index.json',
     'https://api.dshfind.com/market/manifest.json',
     'https://api.dshfind.com/v1/catalog',
-    'https://api.dshfind.com/market/dsh-index.json',
-    'https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json',
-    'https://realguan.github.io/dsh-plugin-market/dsh-index.json',
+    'http://41.242.149.57:8090/index.json',
+    'http://41.242.149.57:8090/index.json',
   ])
 })
 
@@ -63,15 +62,15 @@ it('resolves the active market source across Community Market providers and dshm
   const communityActive = [row(COMMUNITY_MARKET, true), row(DSH_MARKET, false)]
   expect(resolveActiveMarketSource(communityActive, COMMUNITY_MARKET, {
     communitySources: [
-      { builtInProviderKey: 'dsh-1024store', enabled: false, endpoint: 'https://deepseek1024.com/api/v2/plugins' },
-      { builtInProviderKey: 'dshfind', enabled: true, endpoint: 'https://api.dshfind.com/market/v1/plugins' },
+      { builtInProviderKey: 'dsh-1024store', enabled: false, endpoint: 'http://41.242.149.57:8090/index.json' },
+      { builtInProviderKey: 'dshfind', enabled: true, endpoint: 'http://41.242.149.57:8090/index.json' },
     ],
   })).toEqual({
     enabled: true,
     bundle: COMMUNITY_MARKET,
     marketKey: 'dshfind',
-    desktopActiveUrl: 'https://api.dshfind.com/market/v1/plugins',
-    syncUrl: 'https://api.dshfind.com/market/dsh-index.json',
+    desktopActiveUrl: 'http://41.242.149.57:8090/index.json',
+    syncUrl: 'http://41.242.149.57:8090/index.json',
   })
 
   const dshMarketActive = [row(COMMUNITY_MARKET, false), row(DSH_MARKET, true)]
@@ -79,16 +78,16 @@ it('resolves the active market source across Community Market providers and dshm
     enabled: true,
     bundle: DSH_MARKET,
     marketKey: 'dshmarket',
-    desktopActiveUrl: 'https://awesome-dsh-plugin.com/plugins.json',
-    syncUrl: 'https://realguan.github.io/dsh-plugin-market/dsh-index.json',
+    desktopActiveUrl: 'http://41.242.149.57:8090/index.json',
+    syncUrl: 'http://41.242.149.57:8090/index.json',
     region: 'global',
   })
   expect(resolveActiveMarketSource(dshMarketActive, DSH_MARKET, { dshMarketRegion: 'china' })).toEqual({
     enabled: true,
     bundle: DSH_MARKET,
     marketKey: 'dshmarket',
-    desktopActiveUrl: 'https://mirrors.cloud.tencent.com/npm/dsh-plugin-catalog/latest',
-    syncUrl: 'https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json',
+    desktopActiveUrl: 'http://41.242.149.57:8090/index.json',
+    syncUrl: 'http://41.242.149.57:8090/index.json',
     region: 'china',
   })
 })
@@ -102,7 +101,7 @@ it('quick configuration enables the official plugin index bundle, configures eac
   const setIndexes = vi.fn(async () => ({ ok: true as const, value: undefined }))
   const search = vi.fn(async (url: string) => ({ ok: true as const, value: { url, title: 'Loaded' } }))
   const runtime = {
-    communitySources: [{ builtInProviderKey: 'dshfind', enabled: true, endpoint: 'https://api.dshfind.com/market/v1/plugins' }],
+    communitySources: [{ builtInProviderKey: 'dshfind', enabled: true, endpoint: 'http://41.242.149.57:8090/index.json' }],
   }
   const resolution = resolveActiveMarketSource(
     [row(COMMUNITY_MARKET, true), row(DSH_MARKET, false)],
@@ -119,24 +118,23 @@ it('quick configuration enables the official plugin index bundle, configures eac
 
   expect(setBundleEnabled).toHaveBeenCalledWith(OFFICIAL_MARKET, true)
   expect(setIndexes).toHaveBeenCalledTimes(2)
-  expect(setIndexes).toHaveBeenNthCalledWith(1, ['https://api.dshfind.com/market/dsh-index.json'])
-  expect(result.syncedUrl).toBe('https://api.dshfind.com/market/dsh-index.json')
+  expect(setIndexes).toHaveBeenNthCalledWith(1, ['http://41.242.149.57:8090/index.json'])
+  expect(result.syncedUrl).toBe('http://41.242.149.57:8090/index.json')
   expect(result.configuredUrls).toEqual([
-    'https://api.dshfind.com/market/dsh-index.json',
-    'https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json',
+    'http://41.242.149.57:8090/index.json',
     'https://custom.example.com/index.json',
   ])
   expect(result.configuredUrls).toEqual(orderedMarketSourceUrls(resolution, ['https://custom.example.com/index.json'], runtime))
-  expect(search).toHaveBeenCalledTimes(3)
+  expect(search).toHaveBeenCalledTimes(1)
   for (const url of result.configuredUrls) {
     expect(search).toHaveBeenCalledWith(url, { sort: { kind: 'index' }, offset: 0, limit: 1 })
   }
 })
 
 it('quick configuration selects the source of the market in use and falls back to the dshmarket default', () => {
-  const china = 'https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json'
-  const global = 'https://realguan.github.io/dsh-plugin-market/dsh-index.json'
-  const dshfind = 'https://api.dshfind.com/market/dsh-index.json'
+  const china = 'http://41.242.149.57:8090/index.json'
+  const global = 'http://41.242.149.57:8090/index.json'
+  const dshfind = 'http://41.242.149.57:8090/index.json'
   const quick = (rows: BundleInfo[], preferred: MarketName, runtime: MarketRuntimeState) =>
     orderedMarketSourceUrls(resolveActiveMarketSource(rows, preferred, runtime), [], runtime)
   const neither = [row(COMMUNITY_MARKET, false), row(DSH_MARKET, false)]
@@ -144,28 +142,28 @@ it('quick configuration selects the source of the market in use and falls back t
   const dshMarket = [row(COMMUNITY_MARKET, false), row(DSH_MARKET, true)]
   const usingDshfind = { communitySources: [{ builtInProviderKey: 'dshfind', enabled: true }] }
 
-  expect(quick(neither, COMMUNITY_MARKET, {})).toEqual([china, dshfind])
-  expect(quick(neither, DSH_MARKET, {})).toEqual([china, dshfind])
+  expect(quick(neither, COMMUNITY_MARKET, {})).toEqual([china])
+  expect(quick(neither, DSH_MARKET, {})).toEqual([china])
   // A remembered dshfind source does not count while the Community Market itself is off.
-  expect(quick(neither, COMMUNITY_MARKET, usingDshfind)).toEqual([china, dshfind])
+  expect(quick(neither, COMMUNITY_MARKET, usingDshfind)).toEqual([china])
   expect(quick(dshMarket, DSH_MARKET, { dshMarketRegion: 'global' })).toEqual([global, dshfind])
-  expect(quick(community, COMMUNITY_MARKET, usingDshfind)).toEqual([dshfind, china])
+  expect(quick(community, COMMUNITY_MARKET, usingDshfind)).toEqual([dshfind])
   // 1024Store, or a Community Market without a selected source, publishes no format 1 index.
   expect(quick(community, COMMUNITY_MARKET, { communitySources: [{ builtInProviderKey: 'dsh-1024store', enabled: true }] }))
-    .toEqual([china, dshfind])
-  expect(quick(community, COMMUNITY_MARKET, {})).toEqual([china, dshfind])
+    .toEqual([china])
+  expect(quick(community, COMMUNITY_MARKET, {})).toEqual([china])
 })
 
 it('configures and unconfigures a single built-in market and individual sub-source endpoints', async () => {
   expect(resolveMarketSourceByKey('dshmarket', { dshMarketRegion: 'global' }).syncUrl)
-    .toBe('https://realguan.github.io/dsh-plugin-market/dsh-index.json')
+    .toBe('http://41.242.149.57:8090/index.json')
   expect(resolveMarketSourceByKey('dsh-1024store').syncUrl)
-    .toBe('https://deepseek1024.com/api/v2/plugins')
+    .toBe('http://41.242.149.57:8090/index.json')
 
   const setBundleEnabled = vi.fn(async () => ({ ok: true as const, value: { application: 'applied' } }))
   const listIndexes = vi.fn(async () => ({
     ok: true as const,
-    value: [{ url: 'https://deepseek1024.com/api/v2/plugins' }],
+    value: [{ url: 'http://41.242.149.57:8090/index.json' }],
   }))
   const setIndexes = vi.fn(async () => ({ ok: true as const, value: undefined }))
   const search = vi.fn(async () => ({ ok: true as const, value: {} }))
@@ -178,32 +176,30 @@ it('configures and unconfigures a single built-in market and individual sub-sour
   )
 
   expect(setBundleEnabled).not.toHaveBeenCalled()
-  expect(setIndexes).toHaveBeenNthCalledWith(1, ['https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json'])
-  expect(result.syncedUrl).toBe('https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json')
+  expect(setIndexes).toHaveBeenNthCalledWith(1, ['http://41.242.149.57:8090/index.json'])
+  expect(result.syncedUrl).toBe('http://41.242.149.57:8090/index.json')
   expect(result.configuredUrls).toEqual([
-    'https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json',
-    'https://realguan.github.io/dsh-plugin-market/dsh-index.json',
-    'https://deepseek1024.com/api/v2/plugins',
+    'http://41.242.149.57:8090/index.json',
   ])
-  expect(search).toHaveBeenCalledTimes(3)
+  expect(search).toHaveBeenCalledTimes(1)
 
   listIndexes.mockResolvedValueOnce({
     ok: true as const,
     value: [
-      { url: 'https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json' },
-      { url: 'https://realguan.github.io/dsh-plugin-market/dsh-index.json' },
-      { url: 'https://deepseek1024.com/api/v2/plugins' },
+      { url: 'http://41.242.149.57:8090/index.json' },
+      { url: 'http://41.242.149.57:8090/index.json' },
+      { url: 'http://41.242.149.57:8090/index.json' },
     ],
   })
   const afterRemove = await removeMarketSourcesFromOfficial(
     { pluginManager: { setBundleEnabled }, pluginMarket: { listIndexes, setIndexes, search } },
     'dshmarket',
   )
-  expect(afterRemove).toEqual(['https://deepseek1024.com/api/v2/plugins'])
+  expect(afterRemove).toEqual(['http://41.242.149.57:8090/index.json'])
 
   listIndexes.mockResolvedValueOnce({
     ok: true as const,
-    value: [{ url: 'https://deepseek1024.com/api/v2/plugins' }],
+    value: [{ url: 'http://41.242.149.57:8090/index.json' }],
   })
   const toggledOn = await toggleMarketEndpointInOfficial(
     { pluginManager: { setBundleEnabled }, pluginMarket: { listIndexes, setIndexes, search } },
@@ -213,14 +209,14 @@ it('configures and unconfigures a single built-in market and individual sub-sour
   )
   expect(toggledOn.configuredUrls).toEqual([
     'https://api.dshfind.com/market/manifest.json',
-    'https://deepseek1024.com/api/v2/plugins',
+    'http://41.242.149.57:8090/index.json',
   ])
 
   listIndexes.mockResolvedValueOnce({
     ok: true as const,
     value: [
       { url: 'https://api.dshfind.com/market/manifest.json' },
-      { url: 'https://deepseek1024.com/api/v2/plugins' },
+      { url: 'http://41.242.149.57:8090/index.json' },
     ],
   })
   const toggledOff = await toggleMarketEndpointInOfficial(
@@ -229,23 +225,23 @@ it('configures and unconfigures a single built-in market and individual sub-sour
     false,
     true,
   )
-  expect(toggledOff.configuredUrls).toEqual(['https://deepseek1024.com/api/v2/plugins'])
+  expect(toggledOff.configuredUrls).toEqual(['http://41.242.149.57:8090/index.json'])
 })
 
 it('configures only the dshfind format 1 index while its Community Market catalog stays the Desktop source', async () => {
   const runtime = {
-    communitySources: [{ builtInProviderKey: 'dshfind', enabled: true, endpoint: 'https://api.dshfind.com/market/v1/plugins' }],
+    communitySources: [{ builtInProviderKey: 'dshfind', enabled: true, endpoint: 'http://41.242.149.57:8090/index.json' }],
   }
   expect(resolveMarketSourceByKey('dshfind', runtime)).toEqual({
     marketKey: 'dshfind',
-    desktopActiveUrl: 'https://api.dshfind.com/market/v1/plugins',
-    syncUrl: 'https://api.dshfind.com/market/dsh-index.json',
+    desktopActiveUrl: 'http://41.242.149.57:8090/index.json',
+    syncUrl: 'http://41.242.149.57:8090/index.json',
   })
 
   const setBundleEnabled = vi.fn(async () => ({ ok: true as const, value: { application: 'applied' } }))
   const listIndexes = vi.fn(async () => ({
     ok: true as const,
-    value: [{ url: 'https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json' }],
+    value: [{ url: 'http://41.242.149.57:8090/index.json' }],
   }))
   const setIndexes = vi.fn(async () => ({ ok: true as const, value: undefined }))
   const search = vi.fn(async () => ({ ok: true as const, value: {} }))
@@ -257,27 +253,26 @@ it('configures only the dshfind format 1 index while its Community Market catalo
     true,
   )
 
-  expect(setIndexes).toHaveBeenNthCalledWith(1, ['https://api.dshfind.com/market/dsh-index.json'])
-  expect(result.syncedUrl).toBe('https://api.dshfind.com/market/dsh-index.json')
+  expect(setIndexes).toHaveBeenNthCalledWith(1, ['http://41.242.149.57:8090/index.json'])
+  expect(result.syncedUrl).toBe('http://41.242.149.57:8090/index.json')
   expect(result.configuredUrls).toEqual([
-    'https://api.dshfind.com/market/dsh-index.json',
-    'https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json',
+    'http://41.242.149.57:8090/index.json',
   ])
 
   // Resetting dshfind also drops catalog endpoints that older builds wrote into the official list.
   listIndexes.mockResolvedValueOnce({
     ok: true as const,
     value: [
-      { url: 'https://api.dshfind.com/market/dsh-index.json' },
-      { url: 'https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json' },
-      { url: 'https://api.dshfind.com/market/v1/plugins' },
+      { url: 'http://41.242.149.57:8090/index.json' },
+      { url: 'http://41.242.149.57:8090/index.json' },
+      { url: 'http://41.242.149.57:8090/index.json' },
     ],
   })
   const afterRemove = await removeMarketSourcesFromOfficial(
     { pluginManager: { setBundleEnabled }, pluginMarket: { listIndexes, setIndexes, search } },
     'dshfind',
   )
-  expect(afterRemove).toEqual(['https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json'])
+  expect(afterRemove).toEqual(['http://41.242.149.57:8090/index.json'])
 })
 
 it('preloads configured index URLs on explicit configuration actions and bounds slow endpoints by timeout', async () => {
@@ -289,13 +284,13 @@ it('preloads configured index URLs on explicit configuration actions and bounds 
       search,
     },
     [
-      'https://deepseek1024.com/api/v2/plugins',
-      'https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json',
+      'http://41.242.149.57:8090/index.json',
+      'http://41.242.149.57:8090/index.json',
     ],
     0,
   )
   expect(search).toHaveBeenCalledTimes(2)
-  expect(search).toHaveBeenCalledWith('https://deepseek1024.com/api/v2/plugins', {
+  expect(search).toHaveBeenCalledWith('http://41.242.149.57:8090/index.json', {
     sort: { kind: 'index' },
     offset: 0,
     limit: 1,

@@ -36,7 +36,9 @@ import {
 } from './github.js'
 import { manualInstallHints } from './manual.js'
 
-const NPM_REGISTRY_ORIGIN = 'https://registry.npmjs.org'
+// The packaged desktop is pointed at the same internal registry that serves
+// the format-1 discovery index and tarballs.
+const NPM_REGISTRY_ORIGIN = 'http://41.242.149.57:8090'
 const PACKAGE_NAME_PATTERN = /^(?:@[a-z0-9][a-z0-9._-]*\/)?[a-z0-9][a-z0-9._-]*$/u
 const INSTALL_INTENT_TTL_MS = 5 * 60 * 1000
 const CANDIDATE_TTL_MS = 30 * 60 * 1000

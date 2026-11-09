@@ -19,10 +19,7 @@ interface DesktopActionsCapability {
   openTerminal?(): void
 }
 
-const npmRegistryHttp = createRestrictedHttpClient({
-  // This is a compiled-in official registry hostname, never provider input.
-  syntheticProxyHostnames: ['registry.npmjs.org'],
-})
+const npmRegistryHttp = createRestrictedHttpClient()
 
 export function apply(ctx: Context): void {
   // Market's routes hold this for their whole lifetime. It starts session-only

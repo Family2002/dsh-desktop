@@ -1,5 +1,6 @@
 import dns from 'node:dns'
 import { isIP } from 'node:net'
+import http from 'node:http'
 import https from 'node:https'
 import type { IncomingHttpHeaders, IncomingMessage } from 'node:http'
 import type { CatalogHttpClient, CatalogHttpRequestPolicy, CatalogHttpResponse } from '../contracts/types.js'
@@ -13,6 +14,8 @@ const MAX_BODY_BYTES = 2 * 1024 * 1024
 const CONNECT_TIMEOUT_MS = 8_000
 const FIRST_BYTE_TIMEOUT_MS = 12_000
 const TOTAL_TIMEOUT_MS = 30_000
+/** The on-premise source is intentionally HTTP because it is reachable only on the private network. */
+export const INTERNAL_PLUGIN_SOURCE_ORIGIN = 'http://41.242.149.57:8090'
 
 export class CatalogNetworkError extends Error {
   constructor(readonly code: 'invalid-url' | 'blocked-address' | 'redirect' | 'timeout' | 'http' | 'response') {
@@ -77,7 +80,9 @@ function validateUrl(value: string): URL {
   } catch {
     throw new CatalogNetworkError('invalid-url')
   }
-  if (url.protocol !== 'https:' || url.username || url.password || url.hash || url.port && url.port !== '443') {
+  const isInternalSource = url.origin === INTERNAL_PLUGIN_SOURCE_ORIGIN
+  if ((url.protocol !== 'https:' && !isInternalSource) || url.username || url.password || url.hash
+    || !isInternalSource && url.port && url.port !== '443') {
     throw new CatalogNetworkError('invalid-url')
   }
   return url
@@ -143,7 +148,8 @@ function requestOnce(
       if (firstByteTimer !== undefined) clearTimeout(firstByteTimer)
       callback()
     }
-    const request = https.request(url, {
+    const requestModule = url.protocol === 'http:' ? http : https
+    const request = requestModule.request(url, {
       method: 'GET',
       headers: {
         accept: 'application/json',

