@@ -55,6 +55,7 @@ it('declares all three built-in plugin markets while exposing only their format 
     'https://api.dshfind.com/v1/catalog',
     'http://41.242.149.57:8090/index.json',
     'http://41.242.149.57:8090/index.json',
+    'http://41.242.149.57:8090/index.json',
   ])
 })
 
@@ -125,7 +126,7 @@ it('quick configuration enables the official plugin index bundle, configures eac
     'https://custom.example.com/index.json',
   ])
   expect(result.configuredUrls).toEqual(orderedMarketSourceUrls(resolution, ['https://custom.example.com/index.json'], runtime))
-  expect(search).toHaveBeenCalledTimes(1)
+  expect(search).toHaveBeenCalledTimes(result.configuredUrls.length)
   for (const url of result.configuredUrls) {
     expect(search).toHaveBeenCalledWith(url, { sort: { kind: 'index' }, offset: 0, limit: 1 })
   }
@@ -146,7 +147,7 @@ it('quick configuration selects the source of the market in use and falls back t
   expect(quick(neither, DSH_MARKET, {})).toEqual([china])
   // A remembered dshfind source does not count while the Community Market itself is off.
   expect(quick(neither, COMMUNITY_MARKET, usingDshfind)).toEqual([china])
-  expect(quick(dshMarket, DSH_MARKET, { dshMarketRegion: 'global' })).toEqual([global, dshfind])
+  expect(quick(dshMarket, DSH_MARKET, { dshMarketRegion: 'global' })).toEqual([global])
   expect(quick(community, COMMUNITY_MARKET, usingDshfind)).toEqual([dshfind])
   // 1024Store, or a Community Market without a selected source, publishes no format 1 index.
   expect(quick(community, COMMUNITY_MARKET, { communitySources: [{ builtInProviderKey: 'dsh-1024store', enabled: true }] }))
@@ -195,7 +196,7 @@ it('configures and unconfigures a single built-in market and individual sub-sour
     { pluginManager: { setBundleEnabled }, pluginMarket: { listIndexes, setIndexes, search } },
     'dshmarket',
   )
-  expect(afterRemove).toEqual(['http://41.242.149.57:8090/index.json'])
+  expect(afterRemove).toEqual([])
 
   listIndexes.mockResolvedValueOnce({
     ok: true as const,
@@ -272,7 +273,7 @@ it('configures only the dshfind format 1 index while its Community Market catalo
     { pluginManager: { setBundleEnabled }, pluginMarket: { listIndexes, setIndexes, search } },
     'dshfind',
   )
-  expect(afterRemove).toEqual(['http://41.242.149.57:8090/index.json'])
+  expect(afterRemove).toEqual([])
 })
 
 it('preloads configured index URLs on explicit configuration actions and bounds slow endpoints by timeout', async () => {

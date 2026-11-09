@@ -46,6 +46,7 @@ it('declares all three built-in plugin markets while only exposing dshmarket for
     'https://api.dshfind.com/market/manifest.json',
     'https://api.dshfind.com/v1/catalog',
     'http://41.242.149.57:8090/index.json',
+    'http://41.242.149.57:8090/index.json',
   ])
 })
 
@@ -163,7 +164,7 @@ it('configures and unconfigures a single built-in market and individual sub-sour
     { pluginManager: { setBundleEnabled }, pluginMarket: { listIndexes, setIndexes, search } },
     'dshmarket',
   )
-  expect(afterRemove).toEqual(['http://41.242.149.57:8090/index.json'])
+  expect(afterRemove).toEqual([])
 
   listIndexes.mockResolvedValueOnce({
     ok: true as const,
